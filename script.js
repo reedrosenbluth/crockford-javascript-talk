@@ -388,7 +388,10 @@ function pubsub() {
     };
 }
 
-// fixed
+// fixed;
+// setTimeout
+// freeze object
+// remove for loop
 function pubsub() {
     var subscriers = [];
     return Object.freeze({
@@ -397,11 +400,13 @@ function pubsub() {
         },
         publish: function(publication) {
             var i, length = subscribers.length;
-            for (i = 0; i < length; i += 1) {
-                try {
-                    subscribers[i](publication);
-                } catch(ignore) {}
-            }
+            subscribers.forEach(function(s) {
+                setTimeout(function() {
+                    s(publication);
+                }, 0);
+            });
         }
     });
 }
+
+
