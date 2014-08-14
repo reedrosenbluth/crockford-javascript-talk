@@ -265,6 +265,12 @@ function exp(value) {
         : value;
 }
 
+
+// 
+// Day 2
+//
+//
+
 // Write a function addg that adds from many invocations,
 // until it sees an empty invocation
 
@@ -318,4 +324,84 @@ function continuize(unary) {
     return function(callback, x) {
         return callback(unary(x));
     };
+}
+
+// how would you write an attack to get access to the array
+function vector() {
+    var array = [];
+
+    return {
+        get: function get(i) {
+            return array[i];
+        },
+        store: function store(i, v) {
+            array[i] = v;
+        },
+        append: function append(v) {
+            array.push(v);
+        }
+    };
+}
+
+// attack, get array from vector
+
+// var stash;
+// myvector.store('push', function() {
+//      stash = this;
+// });
+// myvector.append(); // stash is array
+
+
+// fixed
+function vector2() {
+    var array = [];
+
+    return {
+        get: function get(i) {
+            return array[+i];
+        },
+        store: function store(i, v) {
+            array[+i] = v;
+        },
+        append: function append(v) {
+            array[array.length] = v;
+        }
+    };
+}
+
+// Make a function that makes a publish/subscribe object.
+// It will reliably deliver all publications to all subscribers in the right order
+
+// why is this implementaiton faulty
+function pubsub() {
+    var subscriers = [];
+    return {
+        subscribe: function(subscriber) {
+            subscribers.push(subscriber);
+        },
+        publish: function(publication) {
+            var i, length = subscribers.length;
+            for (i = 0; i < length; i += 1) {
+                subscribers[i](publication);
+            }
+        }
+    };
+}
+
+// fixed
+function pubsub() {
+    var subscriers = [];
+    return Object.freeze({
+        subscribe: function(subscriber) {
+            subscribers.push(subscriber);
+        },
+        publish: function(publication) {
+            var i, length = subscribers.length;
+            for (i = 0; i < length; i += 1) {
+                try {
+                    subscribers[i](publication);
+                } catch(ignore) {}
+            }
+        }
+    });
 }
